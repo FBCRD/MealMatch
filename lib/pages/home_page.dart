@@ -17,9 +17,10 @@ class HomePage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              //Logo do app
               Image.asset(
-                'assets/caminho_solidario.png',
-                height: 120,
+                'assets/app-logo.png',
+                height: 200,
               ),
               SizedBox(height: 20),
               Text(
@@ -33,6 +34,7 @@ class HomePage extends StatelessWidget {
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
+                  foregroundColor: Colors.white,
                   elevation: 5,
                 ),
                 onPressed: () {
@@ -44,20 +46,11 @@ class HomePage extends StatelessWidget {
                 child: Text('Questionario'),
               ),
               SizedBox(height: 15),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  elevation: 5,
-                ),
-                onPressed: () {
-                  // Aqui você pode colocar a navegação para o jogo
-                },
-                child: Text('Jogar'),
-              ),
               SizedBox(height: 50),
               Image.asset(
-                'assets/logos.png',
-                height: 50,
+
+                'assets/marista-logo.png',
+                height: 120,
               ),
             ],
           ),

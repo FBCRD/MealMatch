@@ -23,8 +23,8 @@ class QuestionarioPage extends StatelessWidget {
         child: Column(
           children: [
             Image.asset(
-              'assets/caminho_solidario.png',
-              height: 100,
+              'assets/app-logo.png',
+              height: 200,
             ),
             SizedBox(height: 20),
             Row(
@@ -68,6 +68,7 @@ class QuestionarioPage extends StatelessWidget {
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
+                foregroundColor: Colors.white,
                 elevation: 5,
               ),
               onPressed: () {
@@ -77,8 +78,8 @@ class QuestionarioPage extends StatelessWidget {
             ),
             Spacer(),
             Image.asset(
-              'assets/logos.png',
-              height: 50,
+              'assets/marista-logo.png',
+              height: 120,
             ),
             SizedBox(height: 10),
           ],

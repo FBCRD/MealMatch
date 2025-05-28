@@ -17,16 +17,31 @@ class Login extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 30),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            //Logo
             children: [
               Image.asset(
-                'assets/caminho_solidario.png',
-                height: 120,
+                'assets/app-logo.png',
+                height: 200,
               ),
               SizedBox(height: 20),
+              //Texto acima do input Nome
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                'Nome:',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+
+                ),
+              ),
+              ),
+              //Forms para inserir nome
               TextField(
                 controller: nomeController,
                 decoration: InputDecoration(
-                  labelText: 'Nome:',
+                  labelText: 'Nome',
                   hintText: 'Digite seu nome',
                   filled: true,
                   fillColor: Colors.white,
@@ -34,11 +49,25 @@ class Login extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 15),
+              //Texto acima do input Idade
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Idade:',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+
+                  ),
+                ),
+              ),
+              //Forms para inserir idade
               TextField(
                 controller: idadeController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  labelText: 'Idade:',
+                  labelText: 'Idade',
                   hintText: 'Digite sua idade',
                   filled: true,
                   fillColor: Colors.white,
@@ -46,24 +75,52 @@ class Login extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 20),
+              //Texto acima do input Nome
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Turma:',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+
+                  ),
+                ),
+              ),
+              //Forms para inserir turma
+              TextField(
+                controller: nomeController,
+                decoration: InputDecoration(
+                  labelText: 'Turma',
+                  hintText: 'Digite sua turma',
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(height: 15),
+              //botão de confirmação
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
-                  shadowColor: Colors.grey,
+                  foregroundColor: Colors.white,
                   elevation: 5,
                 ),
+                //Função que o botão vai executar ao ser pressionado
                 onPressed: () {
-                  Navigator.pushReplacement(
+                  Navigator.pushReplacement(//PushReplacement, substitui a tela anterior
                     context,
-                    MaterialPageRoute(builder: (_) => HomePage(nome: nomeController.text)),
+                    MaterialPageRoute(builder: (_) => HomePage(nome: nomeController.text)), //Encaminha para a proxima pagina com o nome inserido
                   );
                 },
                 child: Text('Começar'),
               ),
               SizedBox(height: 30),
+              //Logo Marista
               Image.asset(
-                'assets/logos.png', // Logo Marista + SESC
-                height: 50,
+                'assets/marista-logo.png',
+                height: 120,
               ),
             ],
           ),
