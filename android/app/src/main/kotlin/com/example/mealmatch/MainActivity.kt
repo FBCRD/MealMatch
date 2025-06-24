@@ -1,4 +1,4 @@
-package com.example.loginflutter
+package com.example.mealmatch
 
 import io.flutter.embedding.android.FlutterActivity
 

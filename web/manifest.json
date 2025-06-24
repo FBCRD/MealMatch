@@ -1,6 +1,6 @@
 {
-    "name": "loginflutter",
-    "short_name": "loginflutter",
+    "name": "mealmatch",
+    "short_name": "mealmatch",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
