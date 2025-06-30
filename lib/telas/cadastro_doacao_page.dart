@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 import '../models/doacao.dart';
 import '../database/doacao_database.dart';
@@ -24,6 +26,9 @@ class _CadastroDoacaoPageState extends State<CadastroDoacaoPage> {
   LatLng? localizacaoMapa;
   final LatLng localPadrao = LatLng(-29.6868, -53.8149); // Ex: Santa Maria
 
+  File? imagemSelecionada;
+  final ImagePicker _picker = ImagePicker();
+
   Future<void> buscarCoordenadas(String endereco) async {
     try {
       final locations = await locationFromAddress(endereco);
@@ -37,6 +42,15 @@ class _CadastroDoacaoPageState extends State<CadastroDoacaoPage> {
       }
     } catch (e) {
       print("Erro ao buscar endereço: $e");
+    }
+  }
+
+  Future<void> capturarImagem() async {
+    final XFile? imagem = await _picker.pickImage(source: ImageSource.camera);
+    if (imagem != null) {
+      setState(() {
+        imagemSelecionada = File(imagem.path);
+      });
     }
   }
 
@@ -72,7 +86,8 @@ class _CadastroDoacaoPageState extends State<CadastroDoacaoPage> {
               const SizedBox(height: 24),
               Container(
                 decoration: BoxDecoration(
-                    color: Colors.white, borderRadius: BorderRadius.circular(16)),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16)),
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
@@ -82,7 +97,8 @@ class _CadastroDoacaoPageState extends State<CadastroDoacaoPage> {
                     ),
                     TextField(
                       controller: quantidadeController,
-                      decoration: const InputDecoration(labelText: 'Quantidade:'),
+                      decoration:
+                      const InputDecoration(labelText: 'Quantidade:'),
                     ),
                     TextField(
                       controller: validadeController,
@@ -139,6 +155,26 @@ class _CadastroDoacaoPageState extends State<CadastroDoacaoPage> {
                       ),
                     ),
                     const SizedBox(height: 16),
+
+                    // Campo da imagem
+                    Text('Imagem da doação:',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 8),
+                    imagemSelecionada != null
+                        ? Image.file(imagemSelecionada!, height: 150)
+                        : const Text('Nenhuma imagem selecionada'),
+                    const SizedBox(height: 8),
+                    ElevatedButton.icon(
+                      onPressed: capturarImagem,
+                      icon: const Icon(Icons.camera_alt),
+                      label: const Text('Tirar foto da doação'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                      ),
+                    ),
+
+                    const SizedBox(height: 16),
+
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.black,
@@ -151,6 +187,7 @@ class _CadastroDoacaoPageState extends State<CadastroDoacaoPage> {
                           quantidade: quantidadeController.text,
                           validade: validadeController.text,
                           endereco: enderecoController.text,
+                          imagemPath: imagemSelecionada?.path,
                         );
 
                         await DoacaoDatabase.instance.create(novaDoacao);

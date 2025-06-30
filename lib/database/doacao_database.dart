@@ -32,7 +32,8 @@ class DoacaoDatabase {
         produto TEXT NOT NULL,
         quantidade TEXT NOT NULL,
         validade TEXT NOT NULL,
-        endereco TEXT NOT NULL
+        endereco TEXT NOT NULL,
+        imagemPath
       )
     ''');
   }

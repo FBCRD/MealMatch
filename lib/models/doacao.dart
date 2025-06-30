@@ -4,6 +4,7 @@ class Doacao {
   final String quantidade;
   final String validade;
   final String endereco;
+  final String? imagemPath;
 
   Doacao({
     this.id,
@@ -11,6 +12,7 @@ class Doacao {
     required this.quantidade,
     required this.validade,
     required this.endereco,
+    this.imagemPath,
   });
 
   Map<String, dynamic> toMap() {
@@ -20,6 +22,7 @@ class Doacao {
       'quantidade': quantidade,
       'validade': validade,
       'endereco': endereco,
+      'imagemPath': imagemPath,
     };
   }
 
@@ -30,6 +33,7 @@ class Doacao {
       quantidade: map['quantidade'],
       validade: map['validade'],
       endereco: map['endereco'],
+      imagemPath: map['imagemPath'],
     );
   }
 }

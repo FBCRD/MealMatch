@@ -19,7 +19,7 @@ class MealMatchApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {
-        '/': (context) => ColetaDoacaoPage(),
+        '/': (context) => CadastroDoacaoPage(),
         '/homeDoador': (context) => HomeDoadorPage(),
         '/homeInstituicao': (context) => HomeInstituicaoPage(),
         '/cadastro': (context) => CadastroDoacaoPage(),
