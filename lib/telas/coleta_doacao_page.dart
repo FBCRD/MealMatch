@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -68,6 +70,7 @@ class _ColetaDoacaoPageState extends State<ColetaDoacaoPage> {
         elevation: 0,
         leading: const BackButton(color: Colors.black),
         actions: const [
+
           Padding(
             padding: EdgeInsets.all(8.0),
             child: CircleAvatar(
@@ -175,23 +178,50 @@ class _ColetaDoacaoPageState extends State<ColetaDoacaoPage> {
                                 ),
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              child: Row(
                                 children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(d.produto,
-                                          style: const TextStyle(fontSize: 16)),
-                                      Text(d.quantidade,
-                                          style: const TextStyle(fontWeight: FontWeight.bold)),
-                                    ],
+                                  // Imagem da doação
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Image.file(
+                                      File(d.imagemPath ?? ''),
+                                      width: 60,
+                                      height: 60,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (context, error, stackTrace) {
+                                        return Container(
+                                          width: 60,
+                                          height: 60,
+                                          color: Colors.grey[300],
+                                          child: const Icon(Icons.image_not_supported),
+                                        );
+                                      },
+                                    ),
                                   ),
-                                  const SizedBox(height: 4),
-                                  Text(d.endereco,
-                                      style: const TextStyle(color: Colors.grey)),
+                                  const SizedBox(width: 12),
+                                  // Texto
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(d.produto,
+                                                style: const TextStyle(fontSize: 16)),
+                                            Text(d.quantidade,
+                                                style: const TextStyle(fontWeight: FontWeight.bold)),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(d.endereco,
+                                            style: const TextStyle(color: Colors.grey)),
+                                      ],
+                                    ),
+                                  ),
                                 ],
                               ),
+
                             ),
                           );
                         },

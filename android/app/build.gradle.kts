@@ -19,7 +19,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.seuprojeto"
+        applicationId = "com.example.mealmatch"
         minSdk = 21
         targetSdk = 35
         versionCode = 1
