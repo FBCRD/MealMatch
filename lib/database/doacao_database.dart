@@ -1,8 +1,10 @@
-import 'package:mealmatch/models/doacao.dart';
+import 'package:Tanamesa/models/doacao.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'dart:io';
+
+import '../models/doacao.dart';
+
 
 
 
@@ -18,15 +20,25 @@ class DoacaoDatabase {
     return _database!;
   }
 
-  Future<Database> _initDB(String fileName) async {
-    final dbPath = await getApplicationDocumentsDirectory();
-    final path = join(dbPath.path, fileName);
+  Future<Database> _initDB(String filePath) async {
+    final dbPath = await getDatabasesPath();
+    final path = join(dbPath, filePath);
 
     return await openDatabase(path, version: 1, onCreate: _createDB);
   }
 
-  Future _createDB(Database db, int version) async {
-    // Deleta a tabela, se já existir
+  Future<void> marcarComoColetada(int id) async {
+    final db = await instance.database;
+
+    await db.update(
+      'doacoes2',
+      {'foicoletada': 1},
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+  Future<void> _createDB(Database db, int version) async {
+
 
     // Cria a tabela com a coluna imagemPath
     await db.execute('''
@@ -36,19 +48,29 @@ class DoacaoDatabase {
       quantidade TEXT NOT NULL,
       validade TEXT NOT NULL,
       endereco TEXT NOT NULL,
-      imagemPath TEXT
+      imagemPath TEXT,
+      foicoletada INTEGER NOT NULL DEFAULT 0
     )
   ''');
   }
-
-  Future<int> create(Doacao doacao) async {
+  Future<Doacao> create(Doacao doacao) async {
     final db = await instance.database;
-    return await db.insert('doacoes2', doacao.toMap());
+    final id = await db.insert('doacoes2', doacao.toMap());
+    return Doacao(
+      id: id,
+      produto: doacao.produto,
+      quantidade: doacao.quantidade,
+      validade: doacao.validade,
+      endereco: doacao.endereco,
+      imagemPath: doacao.imagemPath,
+      foicoletada: doacao.foicoletada,
+    );
   }
+
 
   Future<List<Doacao>> readAll() async {
     final db = await instance.database;
-    final result = await db.query('doacoes2');
+    final result = await db.query('doacoes2', orderBy: 'id DESC');
 
     return result.map((json) => Doacao.fromMap(json)).toList();
   }

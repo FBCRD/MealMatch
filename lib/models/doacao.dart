@@ -5,6 +5,7 @@ class Doacao {
   final String validade;
   final String endereco;
   final String? imagemPath;
+  bool foicoletada;
 
   Doacao({
     this.id,
@@ -13,6 +14,8 @@ class Doacao {
     required this.validade,
     required this.endereco,
     this.imagemPath,
+    this.foicoletada = false
+
   });
 
   Map<String, dynamic> toMap() {
@@ -20,20 +23,33 @@ class Doacao {
       'id': id,
       'produto': produto,
       'quantidade': quantidade,
-      'validade': validade,
+      'validade':validade,
       'endereco': endereco,
       'imagemPath': imagemPath,
+      'foicoletada': foicoletada ? 1 : 0,
     };
   }
 
-  factory Doacao.fromMap(Map<String, dynamic> map) {
+
+
+  factory
+  Doacao.fromMap
+      (
+      Map<String, dynamic> map) {
     return Doacao(
       id: map['id'],
       produto: map['produto'],
-      quantidade: map['quantidade'],
       validade: map['validade'],
+      quantidade: map['quantidade'],
       endereco: map['endereco'],
       imagemPath: map['imagemPath'],
+      foicoletada: map['foicoletada'] == 1, // SQLite usa int para boolean
     );
   }
+
+
+
+
+
 }
+
