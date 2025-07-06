@@ -1,3 +1,7 @@
+/*
+Não ta sendo utilizada ja que esta sendo armazenado no Firebase, deixei aqui caso eu fosse reutilizar quando desse seguimento no projeto
+
+
 import 'package:Tanamesa/models/doacao.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -85,3 +89,4 @@ class DoacaoDatabase {
     db.close();
   }
 }
+*/

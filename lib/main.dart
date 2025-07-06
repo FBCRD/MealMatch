@@ -1,4 +1,5 @@
-// lib/main.dart
+
+import 'package:Tanamesa/telas/coletas_efetuadas.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:Tanamesa/telas/cadastro_doacao_page.dart';
@@ -7,8 +8,14 @@ import 'package:Tanamesa/telas/coleta_doacao_page.dart';
 import 'package:Tanamesa/telas/home_doador_page.dart';
 import 'package:Tanamesa/telas/home_instituicao_page.dart';
 import 'package:Tanamesa/telas/login_page.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:Tanamesa/firebase_options.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -18,12 +25,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'MealMatch',
+      title: 'Tánamesa',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        fontFamily: 'Roboto', // Exemplo de fonte padrão
+        fontFamily: 'Roboto',
       ),
-      // Necessário para o DatePicker em português
+      //DatePicker em português
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
@@ -42,8 +49,7 @@ class MyApp extends StatelessWidget {
         '/homeInstituicao': (context) => const HomeInstituicaoPage(),
         '/cadastroDoacao': (context) => const CadastroDoacaoPage(),
         '/coleta': (context) => const ColetaDoacaoPage(),
-        // A rota de edição não foi criada, mas pode ser adicionada aqui
-        // '/editar': (context) => EditarDoacaoPage(), 
+        '/minhasColetas': (context) => const MinhasColetasPage(),
       },
     );
   }

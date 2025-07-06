@@ -1,12 +1,13 @@
-// lib/pages/cadastro_doacao_page.dart
+
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:image_picker/image_picker.dart';
 import '../models/doacao.dart';
-import '../database/doacao_database.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class CadastroDoacaoPage extends StatefulWidget {
   const CadastroDoacaoPage({super.key});
@@ -16,6 +17,32 @@ class CadastroDoacaoPage extends StatefulWidget {
 }
 
 class _CadastroDoacaoPageState extends State<CadastroDoacaoPage> {
+
+  String? idDoador;
+
+  @override
+  void initState(){
+    super.initState();
+    _carregarDadosUsuario();
+  }
+  Future<void> _carregarDadosUsuario() async {
+    final User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('usuarios')
+          .doc(user.uid)
+          .get();
+
+      if (userDoc.exists && mounted) {
+        setState(() {
+          idDoador = userDoc.get('uid');
+        });
+      }
+    }
+  }
+
+
+  bool _isLoading = false;
   final _formKey = GlobalKey<FormState>();
   final produtoController = TextEditingController();
   final quantidadeController = TextEditingController();
@@ -74,22 +101,42 @@ class _CadastroDoacaoPageState extends State<CadastroDoacaoPage> {
 
   Future<void> _salvarDoacao() async {
     if (_formKey.currentState!.validate()) {
-      final novaDoacao = Doacao(
-        produto: produtoController.text,
-        quantidade: quantidadeController.text,
-        validade: validadeController.text,
-        endereco: enderecoController.text,
-        imagemPath: imagemSelecionada?.path,
-        foicoletada: false, // CORREÇÃO: Sempre inicia como não coletada
-      );
+      setState(() => _isLoading = true);
 
-      await DoacaoDatabase.instance.create(novaDoacao);
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Doação cadastrada com sucesso!')),
+      try {
+        // Cria um objeto Doacao com os dados dos campos.
+        final novaDoacao = Doacao(
+          idDoador: idDoador,
+          produto: produtoController.text,
+          quantidade: quantidadeController.text,
+          validade: validadeController.text,
+          endereco: enderecoController.text,
+          // NOTA: O upload de imagem para o Firebase é um passo a mais (Firebase Storage).
+          // Por enquanto, vamos manter o caminho local, mas o ideal seria fazer o upload
+          // e salvar a URL da imagem aqui.
+          imagemPath: imagemSelecionada?.path,
         );
-        Navigator.pop(context); // Volta para a Home do Doador
+
+        // Adiciona a nova doação à coleção 'doacoes' no Firestore.
+        // O método toFirestore() converte o objeto para o formato que o Firebase entende.
+        await FirebaseFirestore.instance.collection('doacoes').add(novaDoacao.toFirestore());
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Doação cadastrada com sucesso na nuvem!')),
+          );
+          Navigator.pop(context); // Volta para a Home do Doador
+        }
+
+      } catch (e) {
+        print('Erro ao salvar no Firestore: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Ocorreu um erro ao cadastrar a doação: $e')),
+        );
+      } finally {
+        if (mounted) {
+          setState(() => _isLoading = false);
+        }
       }
     }
   }
@@ -97,7 +144,7 @@ class _CadastroDoacaoPageState extends State<CadastroDoacaoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFBA2E),
+      backgroundColor: const Color(0xFFFDB92E),
       appBar: AppBar(
         title: const Text('Cadastro de Doação'),
         backgroundColor: Colors.transparent,

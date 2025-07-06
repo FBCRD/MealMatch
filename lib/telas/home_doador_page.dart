@@ -1,7 +1,9 @@
-// lib/pages/home_doador_page.dart
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../models/doacao.dart';
-import '../database/doacao_database.dart';
+
 
 class HomeDoadorPage extends StatefulWidget {
   const HomeDoadorPage({super.key});
@@ -11,33 +13,57 @@ class HomeDoadorPage extends StatefulWidget {
 }
 
 class _HomeDoadorPageState extends State<HomeDoadorPage> {
-  List<Doacao> doacoes = [];
-  bool isLoading = true;
+  String? nomeDoador;
+
 
   @override
   void initState() {
     super.initState();
-    carregarDoacoes();
+    _carregarDadosUsuario(); //Chama a função para buscar o nome do usuário
+  }
+  Future<void> _carregarDadosUsuario() async {
+    final User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('usuarios')
+          .doc(user.uid)
+          .get();
+
+      if (userDoc.exists && mounted) {
+        setState(() {
+          nomeDoador = userDoc.get('nome');
+        });
+      }
+    }
   }
 
-  Future<void> carregarDoacoes() async {
-    setState(() => isLoading = true);
-    final lista = await DoacaoDatabase.instance.readAll();
-    setState(() {
-      doacoes = lista;
-      isLoading = false;
-    });
-  }
 
-  Future<void> excluirDoacao(int id) async {
-    await DoacaoDatabase.instance.delete(id);
-    carregarDoacoes(); // Atualiza a lista
+
+
+  Future<void> _excluirDoacao(String doacaoId) async {
+    try {
+      await FirebaseFirestore.instance.collection('doacoes').doc(doacaoId).delete();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Doação excluída com sucesso.')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erro ao excluir doação: $e')),
+        );
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    //Pega o usuário logado para filtrar as doações
+    final User? currentUser = FirebaseAuth.instance.currentUser;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFFDB92E),
+      backgroundColor: const Color(0xFFFDB92E), // Cor de fundo
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
@@ -46,29 +72,31 @@ class _HomeDoadorPageState extends State<HomeDoadorPage> {
               Align(
                 alignment: Alignment.topRight,
                 child: GestureDetector(
-                  onTap: () {
-                    // Lógica para perfil ou logout
-                    Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+                  onTap: () async {
+                    await FirebaseAuth.instance.signOut();
+                    if (mounted) {
+                      Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+                    }
                   },
                   child: const CircleAvatar(
                     radius: 20,
                     backgroundColor: Colors.black,
-                    child: Icon(Icons.person, color: Colors.white),
+                    child: Icon(Icons.logout, color: Colors.white),
                   ),
                 ),
               ),
               const SizedBox(height: 8),
               Image.asset('assets/logo.png', height: 150),
               const SizedBox(height: 12),
-              const Text('Bem vindo, Doador', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
+              Text('Bem vindo, ${nomeDoador ?? 'Doador'}',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
               const SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, '/cadastroDoacao').then((_) {
-                      carregarDoacoes();
-                    });
+
+                    Navigator.pushNamed(context, '/cadastroDoacao');
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,
@@ -82,234 +110,80 @@ class _HomeDoadorPageState extends State<HomeDoadorPage> {
               const SizedBox(height: 24),
               const Align(
                 alignment: Alignment.centerLeft,
-                child: Text('Suas doações cadastradas', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                child: Text('Suas doações cadastradas',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
               ),
               const SizedBox(height: 8),
               Expanded(
-                child: isLoading
-                    ? const Center(child: CircularProgressIndicator(color: Colors.black))
-                    : doacoes.isEmpty
-                    ? const Center(
-                    child: Text(
-                      'Nenhuma doação cadastrada ainda.\nClique no botão acima para começar.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 16, color: Colors.black54),
-                    ))
-                    : RefreshIndicator(
-                  onRefresh: carregarDoacoes,
-                  child: ListView.builder(
-                    itemCount: doacoes.length,
-                    itemBuilder: (context, index) {
-                      final d = doacoes[index];
-                      return Card(
-                        margin: const EdgeInsets.symmetric(vertical: 8),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        elevation: 2,
-                        child: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(d.produto, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                                    const SizedBox(height: 4),
-                                    Text('Quantidade: ${d.quantidade}', style: const TextStyle(color: Colors.black87)),
-                                    Text('Validade: ${d.validade}', style: const TextStyle(color: Colors.black87)),
-                                    Text('Endereço: ${d.endereco}', style: const TextStyle(color: Colors.grey)),
-                                    Text('Status: ${d.foicoletada ? "Coletado" : "Aguardando coleta"}',
-                                        style: TextStyle(color: d.foicoletada ? Colors.green : Colors.orange, fontWeight: FontWeight.bold)),
-                                  ],
-                                ),
-                              ),
-                              // Apenas permite excluir se ainda não foi coletado
-                              if (!d.foicoletada)
-                                IconButton(
-                                  icon: const Icon(Icons.delete, color: Colors.red),
-                                  onPressed: () => excluirDoacao(d.id!),
-                                ),
-                            ],
-                          ),
+                child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                  stream: FirebaseFirestore.instance
+                      .collection('doacoes')
+                      .where('idDoador', isEqualTo: currentUser?.uid)
+                      .orderBy('dataCadastro', descending: true)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator(color: Colors.black));
+                    }
+                    if (snapshot.hasError) {
+                      return const Center(child: Text('Ocorreu um erro ao carregar os dados.'));
+                    }
+                    if (currentUser == null) {
+                      return const Center(child: Text('Erro: usuário não encontrado.'));
+                    }
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return const Center(
+                        child: Text(
+                          'Nenhuma doação cadastrada ainda.\nClique no botão acima para começar.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 16, color: Colors.black54),
                         ),
                       );
-                    },
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-import 'package:flutter/material.dart';
-import '../models/doacao.dart';
-import '../database/doacao_database.dart';
-
-class HomeDoadorPage extends StatefulWidget {
-  const HomeDoadorPage({super.key});
-
-  @override
-  State<HomeDoadorPage> createState() => _HomeDoadorPageState();
-}
-
-class _HomeDoadorPageState extends State<HomeDoadorPage> {
-  List<Doacao> doacoes = [];
-
-  @override
-  void initState() {
-    super.initState();
-    carregarDoacoes();
-  }
-
-  Future<void> carregarDoacoes() async {
-    final lista = await DoacaoDatabase.instance.readAll();
-    setState(() {
-      doacoes = lista;
-    });
-  }
-
-  Future<void> excluirDoacao(int id) async {
-    await DoacaoDatabase.instance.delete(id);
-    carregarDoacoes(); // Atualiza a lista
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFD7D0C3),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            children: [
-              Align(
-                alignment: Alignment.topRight,
-                child: CircleAvatar(
-                  backgroundColor: Colors.black,
-                  child: Icon(Icons.person, color: Colors.white),
-                ),
-              ),
-              const SizedBox(height: 12),
-              Image.asset('assets/logo2.png', height: 80),
-              const SizedBox(height: 12),
-              const Text('Bem vindo, Doador',
-                  style: TextStyle(fontSize: 18)),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/cadastro').then((_) {
-                    carregarDoacoes(); // Atualiza após cadastro
-                  });
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-                  elevation: 6,
-                ),
-                child: const Text('Fazer doação'),
-              ),
-              const SizedBox(height: 24),
-              Expanded(
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                  elevation: 4,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: doacoes.isEmpty
-                        ? const Center(child: Text('Nenhuma doação cadastrada'))
-                        : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Produtos doados',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16),
-                        ),
-                        const Divider(),
-                        Expanded(
-                          child: ListView.builder(
-                            itemCount: doacoes.length,
-                            itemBuilder: (context, index) {
-                              final d = doacoes[index];
-                              return Padding(
-                                padding:
-                                const EdgeInsets.symmetric(vertical: 6.0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                        children: [
-                                          Text(d.produto,
-                                              style: const TextStyle(
-                                                  fontSize: 15)),
-                                          Text('Validade: ${d.validade}',
-                                              style: const TextStyle(
-                                                  color: Colors.grey)),
-                                          Text('Endereço: ${d.endereco}',
-                                              style: const TextStyle(
-                                                  color: Colors.grey)),
-                                        ],
-                                      ),
-                                    ),
-                                    Column(
-                                      children: [
-                                        Text(d.quantidade,
-                                            style: const TextStyle(fontSize: 15)),
-                                        Row(
-                                          children: [
-                                            IconButton(
-                                              icon: const Icon(Icons.edit, color: Colors.blue),
-                                              onPressed: () {
-                                                Navigator.pushNamed(
-                                                  context,
-                                                  '/editar',
-                                                  arguments: d,
-                                                ).then((_) => carregarDoacoes());
-                                              },
-                                            ),
-                                            IconButton(
-                                              icon: const Icon(Icons.delete, color: Colors.red),
-                                              onPressed: () {
-                                                excluirDoacao(d.id!);
-                                              },
-                                            ),
-                                          ],
+                    }
+                    final doacoesDocs = snapshot.data!.docs;
+                    return ListView.builder(
+                      itemCount: doacoesDocs.length,
+                      itemBuilder: (context, index) {
+                        final doacao = Doacao.fromFirestore(doacoesDocs[index]);
+                        return Card(
+                          margin: const EdgeInsets.symmetric(vertical: 8),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          elevation: 2,
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(doacao.produto, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                                      const SizedBox(height: 4),
+                                      Text('Quantidade: ${doacao.quantidade}', style: const TextStyle(color: Colors.black87)),
+                                      Text('Validade: ${doacao.validade}', style: const TextStyle(color: Colors.black87)),
+                                      Text('Endereço: ${doacao.endereco}', style: const TextStyle(color: Colors.grey)),
+                                      Text(
+                                        'Status: ${doacao.foicoletada ? "Coletado" : "Aguardando coleta"}',
+                                        style: TextStyle(
+                                          color: doacao.foicoletada ? Colors.green : Colors.orange,
+                                          fontWeight: FontWeight.bold,
                                         ),
-                                      ],
-                                    ),
-                                  ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              );
-                            },
+                                if (!doacao.foicoletada)
+                                  IconButton(
+                                    icon: const Icon(Icons.delete, color: Colors.red),
+                                    onPressed: () => _excluirDoacao(doacao.id!),
+                                  ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
+                        );
+                      },
+                    );
+                  },
                 ),
               ),
             ],
@@ -319,4 +193,3 @@ class _HomeDoadorPageState extends State<HomeDoadorPage> {
     );
   }
 }
-*/

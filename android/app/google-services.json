@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "503914200184",
+    "firebase_url": "https://app-de-teste-d5641.firebaseio.com",
+    "project_id": "app-de-teste-d5641",
+    "storage_bucket": "app-de-teste-d5641.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:503914200184:android:e1d9151faace296862c18d",
+        "android_client_info": {
+          "package_name": "com.example.mealmatch"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7DWUTfllQ1mR2qeUqu6NqQ_821Ryu3e4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:503914200184:android:dc160c9bf41037d462c18d",
+        "android_client_info": {
+          "package_name": "com.fbcrd.tanamesa"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7DWUTfllQ1mR2qeUqu6NqQ_821Ryu3e4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

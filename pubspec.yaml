@@ -26,6 +26,10 @@ dependencies:
   geocoding: ^2.1.1       # Para converter endereço em coordenadas
   image_picker: ^1.0.7    # Para a câmera
   url_launcher: ^6.2.1    # Para abrir o Google Maps
+  firebase_core: ^2.32.0
+  cloud_firestore: ^4.17.5
+  firebase_auth: ^4.20.0
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
