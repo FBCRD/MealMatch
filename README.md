@@ -76,14 +76,14 @@ Siga os passos abaixo para executar o projeto em seu ambiente local.
     ```
 
 ---
-![142154318](https://github.com/user-attachments/assets/f20dfc26-0e20-470a-9b47-1b06bf067473)
-
 
 ## Autor
+![142154318](https://github.com/user-attachments/assets/f20dfc26-0e20-470a-9b47-1b06bf067473)
+
 Fabricio Paula Rodrigues
+
 E-mail Academico: fabricio.rodrigues@acad.ufsm.br 
 
-![142154318](https://github.com/user-attachments/assets/f20dfc26-0e20-470a-9b47-1b06bf067473)
 
 
 **Universidade Federal de Santa Maria (UFSM)** **Colégio Politecnico** **Sistemas Para Internet**
