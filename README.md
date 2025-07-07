@@ -4,7 +4,7 @@
 ![Flutter](https://img.shields.io/badge/Flutter-3.x-blue?logo=flutter)
 ![Firebase](https://img.shields.io/badge/Firebase-BaaS-orange?logo=firebase)
 
-Repositório do projeto Tánamesa, um aplicativo para combate ao desperdício de alimentos, desenvolvido no âmbito da disciplina de PROGRAMAÇÃO PARA DISPOSITIVOS MÓVEIS (DPADP0350) e Gestão de Novos Produtos e Marcas (CAD 1113) - PROGRAMAÇÃO PARA DISPOSITIVOS MÓVEIS na Universidade Federal de Santa Maria (UFSM).
+Repositório do projeto Tánamesa, um aplicativo para combate ao desperdício de alimentos, desenvolvido no âmbito da disciplina de PROGRAMAÇÃO PARA DISPOSITIVOS MÓVEIS (DPADP0350) e Gestão de Novos Produtos e Marcas (CAD 1113) na Universidade Federal de Santa Maria (UFSM).
 
 ---
 
@@ -82,7 +82,7 @@ Siga os passos abaixo para executar o projeto em seu ambiente local.
 Fabricio Paula Rodrigues
 E-mail Academico: fabricio.rodrigues@acad.ufsm.br 
 
-| [<img src="[[https://avatars.githubusercontent.com/u/fbcrdID?v=4]](https://avatars.githubusercontent.com/u/142154318?v=4)" width=200><br><sub>Fabricio Rodrigues</sub>](https://github.com/fbcrd)
+![alt text](https://avatars.githubusercontent.com/u/fbcrdID?v=4 "Logo Title Text 1")
 
 
 **Universidade Federal de Santa Maria (UFSM)** **Colégio Politecnico** **Sistemas Para Internet**
