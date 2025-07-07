@@ -82,7 +82,7 @@ Siga os passos abaixo para executar o projeto em seu ambiente local.
 Fabricio Paula Rodrigues
 E-mail Academico: fabricio.rodrigues@acad.ufsm.br 
 
-![alt text](https://avatars.githubusercontent.com/u/fbcrdID?v=4 "Logo Title Text 1")
+![fbcrd][https://avatars.githubusercontent.com/u/142154318?v=4]
 
 
 **Universidade Federal de Santa Maria (UFSM)** **Colégio Politecnico** **Sistemas Para Internet**
