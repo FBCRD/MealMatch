@@ -5,9 +5,9 @@
         android:required="false" />
     <uses-permission android:name="android.permission.CAMERA"/>
     <application
-        android:label="mealmatch"
+        android:label="tanamesa"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/launcher_icon"
         android:enableOnBackInvokedCallback="true">
         <activity
             android:name=".MainActivity"
